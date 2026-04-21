@@ -1,0 +1,165 @@
+package ${package.Controller};
+
+#if(${superControllerClassPackage})
+import ${cfg.converterPackage}.${entity}Converter;
+import ${package.Entity}.${entity};
+import ${cfg.voPackage}.${entity}VO;
+import ${package.Service}.${table.serviceName};
+import com.uneed.common.core.text.JsonUtil;
+import com.uneed.common.mybatis.page.PageData;
+import com.uneed.common.mybatis.page.PageSearch;
+import com.uneed.common.support.api.Result;
+import ${superControllerClassPackage};
+#if(${swagger2})
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+#end
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
+#if(${cfg.controllerImport})
+import org.springframework.web.multipart.MultipartFile;
+#end
+
+import javax.validation.Valid;
+#else
+    #if(${restControllerStyle})
+import org.springframework.web.bind.annotation.RestController;
+    #else
+import org.springframework.stereotype.Controller;
+    #end
+#end
+
+/**
+ * ${table.comment} 前端控制器
+ *
+ * @author ${author}
+ * @date ${date}
+ */
+@Slf4j
+#if(${superControllerClass})
+#if(${swagger2})
+@Api(tags = {"${table.comment}"})
+#end
+#if(${restControllerStyle})
+@RestController
+#else
+@Controller
+#end
+#set($requestBasePath="#if(${cfg.requestPrefix})${cfg.requestPrefix}#end#if(${package.ModuleName})/${package.ModuleName}#end/#if(${controllerMappingHyphenStyle})${controllerMappingHyphen}#else${table.entityPath}#end")
+#set($variableRequestBasePath="#if(${cfg.variableRequestPrefix})${cfg.variableRequestPrefix}#else${cfg.requestPrefix}#end#if(${package.ModuleName})/${package.ModuleName}#end/#if(${controllerMappingHyphenStyle})${controllerMappingHyphen}#else${table.entityPath}#end")
+@RequestMapping("${variableRequestBasePath}")
+public class ${table.controllerName} extends ${superControllerClass}<${table.serviceName}, ${entity}, ${entity}Converter, ${entity}VO> {
+
+    /**
+     * 新增数据
+     *
+     * @param vo VO对象
+     * @return Result<String> 新增结果，并填充数据id
+     */
+    @ApiOperation(value = "新增数据接口", notes = "接收数据的VO对象，将该对象持久化到数据库中表")
+    @PostMapping(value = "insert")
+    public Result<String> insert(@Valid @RequestBody @ApiParam(value = "数据对象", required = true) ${entity}VO vo) {
+        log.info("====> ${requestBasePath}/insert, vo=" + JsonUtil.toJson(vo));
+        return super.insert(vo, null);
+    }
+
+    /**
+     * 修改数据
+     *
+     * @param vo VO对象
+     * @return Result<String> 修改结果，并填充受影响行数
+     */
+    @ApiOperation(value = "修改数据接口，返回受影响行数", notes = "接收数据的VO对象，将该对象持久化到数据库中表")
+    @PostMapping(value = "update")
+    public Result<String> update(@Valid @RequestBody @ApiParam(value = "数据对象", required = true) ${entity}VO vo) {
+        log.info("====> ${requestBasePath}/update, vo=" + JsonUtil.toJson(vo));
+        return super.update(vo, null);
+    }
+
+    /**
+     * 根据id删除数据
+     *
+     * @param id 数据主键
+     * @return Result<String> 删除结果，并填充受影响行数
+     */
+    @ApiOperation(value = "删除数据接口，返回受影响行数", notes = "根据数据id，从数据库中删除其对应的数据")
+    @GetMapping(value = "remove/{id}")
+    public Result<String> remove(@PathVariable("id") @ApiParam(value = "数据id", required = true) String id) {
+        log.info("====> ${requestBasePath}/remove/{id}, id=" + id);
+        return super.remove(id, null);
+    }
+    #if(${cfg.controllerActive})
+
+    /**
+     * 根据id设置数据有效性
+     *
+     * @param id 数据主键
+     * @return Result<String> 设置有效性结果结果，并填充受影响行数
+     */
+    @ApiOperation(value = "设置数据有效性接口，返回受影响行数", notes = "根据数据id，设置对应数据的有效性")
+    @GetMapping(value = "active/{id}")
+    public Result<String> active(@PathVariable("id") @ApiParam(value = "数据id", required = true) String id) {
+        log.info("====> ${requestBasePath}/active/{id}, id=" + id);
+        return super.active(id, null);
+    }
+    #end
+
+    /**
+     * 根据id获取数据详情
+     *
+     * @param id 数据主键
+     * @return Result<${entity}VO> 详情结果
+     */
+    @ApiOperation(value = "获取数据详情接口", notes = "根据数据id，从数据库中获取其对应的数据详情")
+    @GetMapping(value = "detail/{id}")
+    public Result<${entity}VO> detail(@PathVariable("id") @ApiParam(value = "数据id", required = true) String id) {
+        log.info("====> ${requestBasePath}/detail/{id}, id=" + id);
+        return super.detail(id, null);
+    }
+
+    /**
+     * 根据条件参数获取分页后的列表数据
+     *
+     * @param search 条件参数
+     * @return Result<PageData<${entity}VO>> 响应结果，并填充分页后的数据
+     */
+    @ApiOperation(value = "获取数据列表接口", notes = "根据传入参数条件，从数据库中获取分页后的数据列表")
+    @PostMapping(value = "list")
+    public Result<PageData<${entity}VO>> list(@RequestBody @ApiParam(value = "条件参数", required = true) PageSearch<${entity}VO> search) {
+        log.info("====> ${requestBasePath}/list, search=" + JsonUtil.toJson(search));
+        return super.list(search, null);
+    }
+    #if(${cfg.controllerImport})
+
+    /**
+     * 根据excel附件，执行导入操作
+     *
+     * @param file excel附件
+     * @return Result<Integer> 数据导入结果，并填导入数据
+     */
+    @ApiOperation(value = "数据导入接口，返回导入成功数量", notes = "接口接收一个Excel文件，将数据导入到数据库")
+    @PostMapping(value = "import")
+    public Result<Integer> importExcel(@RequestParam("file") @ApiParam(value = "excel附件", required = true) MultipartFile file) {
+        log.info("====> ${requestBasePath}/import, fileName=" + file.getOriginalFilename());
+        return super.importExcel(file, super.voClass, null);
+    }
+    #end
+    #if(${cfg.controllerExport})
+
+    /**
+     * 将数据导出为一个excel附件
+     */
+    @ApiOperation(value = "数据导出接口", notes = "将数据导出成Excel文件")
+    @GetMapping(value = "export")
+    public void exportExcel() {
+        log.info("====> ${requestBasePath}/import");
+        super.exportExcel(super.getExportName("${table.comment}"), super.voClass, null);
+    }
+    #end
+}
+#else
+public class ${table.controllerName} {
+
+}
+#end

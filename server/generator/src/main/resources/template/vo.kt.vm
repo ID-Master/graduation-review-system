@@ -1,0 +1,66 @@
+package ${cfg.voPackage}
+
+#if(${swagger2})
+import io.swagger.annotations.ApiModel
+import io.swagger.annotations.ApiModelProperty
+#end
+
+import java.io.Serializable
+#foreach($pkg in ${table.importPackages})
+#if($pkg.substring(0,5) == "java.")
+import ${pkg}
+#end
+#end
+
+/**
+ * $!{table.comment} VO对象
+ *
+ * @author ${author}
+ * @date ${date}
+ */
+#if(${swagger2})
+@ApiModel(value = "${entity}VO", description = "${table.comment} VO对象")
+#end
+data class ${entity}VO(
+
+    /**
+     * id主键
+     */
+    #if(${swagger2})
+    @ApiModelProperty(value = "id主键", name = "id")
+    #end
+    val id: Long? = null,
+
+## ----------  BEGIN 字段循环遍历  ----------
+#foreach($field in ${table.fields})
+    #set($symbol=",")
+    #if($foreach.last)
+        #set($symbol="")
+    #end
+    #set($propertyType=${field.propertyType})
+    #if("$propertyType" == "Integer")
+        #set($propertyType="Int")
+    #end
+    #if("$!field.comment" != "")
+        #set($propertyVal=${field.comment})
+    #else
+        #set($propertyVal=${field.propertyName})
+    #end
+    /**
+     * ${propertyVal}
+     */
+    #if(${swagger2})
+    @ApiModelProperty(value = "${propertyVal}", name = "${field.propertyName}")
+    #end
+    val ${field.propertyName}: ${propertyType}? = null${symbol}
+
+#end
+## ----------  END 字段循环遍历  ----------
+) : Serializable {
+
+#if(${entitySerialVersionUID})
+    companion object {
+        private const val serialVersionUID = 1L
+    }
+#end
+}

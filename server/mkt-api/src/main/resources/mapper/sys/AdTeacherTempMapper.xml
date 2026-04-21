@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.cuhk.mkt.mapper.sys.AdTeacherTempMapper">
+
+    <insert id="insertAdTeacher">
+        INSERT INTO sys_user
+        (
+            id,
+            created_date,
+            created_by,
+            updated_date,
+            updated_by,
+            remove_flag,
+            description,
+            login_name,
+            user_type,
+            `status`,
+            name_ch,
+            name_en,
+            major
+        )
+        SELECT
+            REPLACE(UUID(), '-', ''),
+            NOW(),
+            '0',
+            NOW(),
+            '0',
+            0,
+            st.description,
+            st.employee_id,
+            'TEACHER',
+            1,
+            st.`name`,
+            st.display_name,
+            st.department
+        FROM
+            sys_ad_teacher_temp st
+            LEFT JOIN sys_user su ON su.login_name = st.employee_id AND su.user_type = 'TEACHER'
+        WHERE
+            st.batch_number = #{batchNumber}
+            AND su.login_name IS NULL
+    </insert>
+
+    <update id="updateAdTeacher">
+        UPDATE
+            sys_user su,
+            sys_ad_teacher_temp st
+        SET
+            su.updated_date = NOW(),
+            su.description = st.description,
+            su.remove_flag = 0,
+            su.name_ch = st.`name`,
+            su.name_en = st.display_name,
+            su.major = st.department
+        WHERE
+            su.user_type = 'TEACHER'
+            AND st.batch_number = #{batchNumber}
+            AND su.login_name = st.employee_id
+    </update>
+
+</mapper>

@@ -1,0 +1,142 @@
+server:
+  port: 10050
+  use-forward-headers: true
+  tomcat:
+    remote-ip-header: "X-Forwarded-For"
+    protocol-header: "X-Forwarded-Proto"
+    protocol-header-https-value: "https"
+    remoteip:
+      remote-ip-header: "X-Forwarded-For"
+      protocol-header: "X-Forwarded-Proto"
+      protocol-header-https-value: "https"
+spring:
+  application:
+    name: cuhk-mkt
+  profiles:
+    active: prod
+  servlet:
+    multipart:
+      #总文件大小
+      max-request-size: 1024MB
+      #单个文件大小
+      max-file-size: 100MB
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    #default-property-inclusion: NON_NULL
+    time-zone: GMT+8
+  # 定时任务
+  task:
+    scheduling:
+      pool:
+        size: 20
+      thread-name-prefix: spring-task
+  mail:
+    # smtp服务主机
+    host: mail.cuhk.edu.cn
+#    host: smtp.163.com
+    # 端口号
+    port: 587
+    # 服务协议
+    protocol: smtp
+    # 编码集
+    default-encoding: UTF-8
+    # 发邮件账户
+    username: no-reply-smegasc@cuhk.edu.cn
+    #    username: smeit04@cuhk.edu.cn
+#    username: taokai_sz@163.com
+    # 授权码（加密明文）
+    password: i4nylD&Y%YO7t$$(5tT~8B" wjVvnx
+#    password: ENC<!q7S1OgiiZNy5UY717ZDvrmLaWMkrfhrt>
+#    password: YDJHALWXATGCCLDP
+    # 启动验证（是：true，否：false）
+    test-connection: false
+    properties:
+      mail:
+        debug: true
+        smtp:
+          # 设置是否需要认证，如果为true,那么用户名和密码就必须的
+          auth: true
+          # ssl config
+          ssl:
+            enable: false
+
+# 日志
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    cn.edu.cuhk.mkt: info
+    org.springframework.security: debug
+
+  # 保存路径
+  file:
+    path: ./logs
+
+mybatis-plus:
+  configuration:
+    #控制台显示sql
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# url变量
+adminPath: /mkt
+
+# AD域认证
+ad:
+  # 开启：true，关闭：false
+  enabled: true
+  host: 10.20.241.122
+  port: 389
+  domain: ad.cuhk.edu.cn
+
+# 课程
+course:
+  # 专业
+  majors:
+    - code: "Major"
+      name: "应用经济学"
+      value: "Applied Economics"
+      sortIndex: 10
+    - code: "Major"
+      name: "经济科学"
+      value: "Economic Science"
+      sortIndex: 20
+    - code: "Major"
+      name: "金融科技"
+      value: "FE-Fintech"
+      sortIndex: 30
+    - code: "Major"
+      name: "金融"
+      value: "Finance"
+      sortIndex: 40
+    - code: "Major"
+      name: "全球商业与创新"
+      value: "Global Bussiness and Innovation"
+      sortIndex: 50
+    - code: "Major"
+      name: "全球商业管理"
+      value: "Global Business Management"
+      sortIndex: 60
+    - code: "Major"
+      name: "环球供应链及物流管理专业"
+      value: "Global Supply Chain and Logistics Management"
+      sortIndex: 70
+    - code: "Major"
+      name: "营销与传播"
+      value: "Marketing and Communication"
+      sortIndex: 80
+    - code: "Major"
+      name: "会计专业"
+      value: "Professional Accountancy"
+      sortIndex: 90
+
+# 配置加解密
+jasypt:
+  encryptor:
+    # 秘钥, 启动前打开，启动后删除
+    password: cuhk-mkt@2021
+    # 指定加密方式
+    algorithm: PBEWithMD5AndDES
+    iv-generator-classname: org.jasypt.iv.NoIvGenerator
+    # 指定前后缀
+    property:
+      prefix: "ENC<!"
+      suffix: ">"

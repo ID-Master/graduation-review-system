@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.cuhk.mkt.mapper.biz.CourseTemplateMapper">
+
+    <select id="listCourseTemplateByCondition" parameterType="cn.edu.cuhk.mkt.param.biz.CourseTemplateParam"
+            resultType="cn.edu.cuhk.mkt.entity.biz.CourseTemplate">
+        SELECT
+            DISTINCT bcc.part,bct.*
+        FROM
+            biz_course_category bcc
+            JOIN biz_course_template bct ON bct.course_category_id = bcc.id
+        WHERE
+            bcc.remove_flag = 0
+            AND bct.remove_flag = 0
+            AND bcc.category_code = #{condition.categoryCode}
+            <if test="condition.major != null and condition.major != ''">
+                AND bcc.major = #{condition.major}
+            </if>
+            <if test="condition.part != null and condition.part != ''">
+                AND bct.part = #{condition.part}
+            </if>
+            <if test="condition.grade != null and condition.grade != ''">
+                AND bcc.grade = #{condition.grade}
+            </if>
+            ORDER BY bct.course_code ASC
+    </select>
+
+</mapper>

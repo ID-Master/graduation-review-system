@@ -1,0 +1,17 @@
+version: '3'
+services:
+  redis:
+    image: redis:5
+    restart: always
+    container_name: redis5
+    ports:
+      - 6379:6379
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./data/datadir:/data
+      #- ./data/conf/redis.conf:/etc/redis/redis.conf
+      - ./data/logs:/logs
+    command: 
+      redis-server --requirepass cuhk#nW8oQKAqyUw --protected-mode no
+    

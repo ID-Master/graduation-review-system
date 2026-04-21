@@ -1,0 +1,16 @@
+package ${cfg.converterPackage};
+
+import ${package.Entity}.${entity};
+import ${cfg.dtoPackage}.${entity}DTO;
+import ${cfg.voPackage}.${entity}VO;
+import ${cfg.superConverterClassPackage};
+
+/**
+ * ${table.comment}  对象转换器
+ *
+ * @author ${author}
+ * @date ${date}
+ */
+public class ${entity}Converter extends ${cfg.superConverterClass}<${entity}, ${entity}VO> {
+
+}

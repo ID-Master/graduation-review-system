@@ -1,0 +1,16 @@
+package ${cfg.clientPackage};
+
+import ${cfg.fallbackPackage}.${entity}Fallback;
+import org.springframework.cloud.openfeign.FeignClient;
+
+/**
+ * ${table.comment}  Feign 客户端
+ *
+ * @author ${author}
+ * @date ${date}
+ */
+#set($clientBasePath="#if(${cfg.clientPrefix})/${cfg.clientPrefix}#end#if(${package.ModuleName})/${package.ModuleName}#end/#if(${controllerMappingHyphenStyle})${controllerMappingHyphen}#else${table.entityPath}#end")
+@FeignClient(value = "${${package.ModuleName}.serviceId}", path = "${clientBasePath}", contextId = "${entity}Client")
+public interface ${entity}Client {
+
+}

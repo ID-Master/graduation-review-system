@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.cuhk.mkt.mapper.sys.ProfilesMapper">
+
+    <delete id="deleteByCondition" parameterType="cn.edu.cuhk.mkt.entity.sys.Profiles">
+        DELETE FROM sys_profiles
+        <where>
+            <if test="condition.code != null and condition.code != '' ">
+                AND `code` = #{condition.code}
+            </if>
+            <if test="condition.value != null and condition.value != '' ">
+                AND `value` = #{condition.value}
+            </if>
+        </where>
+    </delete>
+
+</mapper>

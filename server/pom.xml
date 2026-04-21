@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <version>1.0.0</version>
+
+    <groupId>cn.edu.cuhk.mkt.api</groupId>
+
+    <artifactId>cuhk-mkt-api</artifactId>
+    <name>cuhk-mkt-api</name>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>uneed-common/common-parent</module>
+        <module>uneed-common/common-annotation</module>
+        <module>uneed-common/common-support</module>
+        <module>uneed-common/common-core</module>
+        <module>uneed-common/common-dict</module>
+        <module>uneed-common/common-mybatis</module>
+        <module>mkt-api</module>
+    </modules>
+
+</project>

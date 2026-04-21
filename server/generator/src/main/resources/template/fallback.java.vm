@@ -1,0 +1,17 @@
+package ${cfg.fallbackPackage};
+
+import ${cfg.clientPackage}.${entity}Client;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+
+/**
+ * ${table.comment}  Feign Fallback
+ *
+ * @author ${author}
+ * @date ${date}
+ */
+@Component
+@Slf4j
+public class ${entity}Fallback implements ${entity}Client {
+
+}

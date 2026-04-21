@@ -1,0 +1,98 @@
+package ${cfg.voPackage};
+
+#if(${swagger2})
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+#end
+#if(${entityLombokModel})
+import lombok.Data;
+#end
+
+import java.io.Serializable;
+#foreach($pkg in ${table.importPackages})
+    #if($pkg.substring(0,5) == "java.")
+import ${pkg};
+    #end
+#end
+
+/**
+ * $!{table.comment} vo对象
+ *
+ * @author ${author}
+ * @date ${date}
+ */
+#if(${entityLombokModel})
+@Data
+#end
+#if(${swagger2})
+@ApiModel(value = "${entity}VO", description = "${table.comment} VO对象")
+#end
+public class ${entity}VO implements Serializable {
+
+#if(${entitySerialVersionUID})
+    private static final long serialVersionUID = 1L;
+#end
+
+    /**
+     * id主键
+     */
+#if(${swagger2})
+    @ApiModelProperty(value = "id主键", name = "id")
+#end
+    private String id;
+## ----------  BEGIN 字段循环遍历  ----------
+#foreach($field in ${table.fields})
+    #if("$!field.comment" != "")
+    #set($propertyVal=${field.comment})
+    #else
+    #set($propertyVal=${field.propertyName})
+    #end
+
+    /**
+     * ${propertyVal}
+     */
+    #if(${swagger2})
+    @ApiModelProperty(value = "${propertyVal}", name = "${field.propertyName}")
+    #end
+    private ${field.propertyType} ${field.propertyName};
+#end
+## ----------  END 字段循环遍历  ----------
+#if(!${entityLombokModel})
+
+    public Long getId() {
+        return this.id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+    ## ----------  字段循环遍历  ----------
+    #foreach($field in ${table.fields})
+        #if(${field.propertyType.equals("boolean")})
+            #set($getprefix="is")
+        #else
+            #set($getprefix="get")
+        #end
+
+    public ${field.propertyType} ${getprefix}${field.capitalName}() {
+        return this.${field.propertyName};
+    }
+
+    public void set${field.capitalName}(${field.propertyType} ${field.propertyName}) {
+        this.${field.propertyName} = ${field.propertyName};
+    }
+    #end
+#end
+
+#if(!${entityLombokModel})
+    @Override
+    public String toString() {
+        return "${entity}VO{" +
+        "id=" + id +
+#foreach($field in ${table.fields})
+        ", ${field.propertyName}=" + ${field.propertyName} +
+#end
+        "} ";
+    }
+#end
+}

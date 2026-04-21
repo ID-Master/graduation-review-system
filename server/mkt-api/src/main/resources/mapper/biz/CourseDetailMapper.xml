@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.cuhk.mkt.mapper.biz.CourseDetailMapper">
+
+    <delete id="deleteByCondition" parameterType="cn.edu.cuhk.mkt.entity.biz.CourseDetail">
+        DELETE FROM biz_course_detail
+        WHERE course_master_id = #{condition.courseMasterId}
+        AND course_category_code = #{condition.courseCategoryCode}
+    </delete>
+
+</mapper>

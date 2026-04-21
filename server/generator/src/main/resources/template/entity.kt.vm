@@ -1,0 +1,80 @@
+package ${package.Entity}
+
+#foreach($pkg in ${table.importPackages})
+import ${pkg}
+#end
+
+/**
+ * $!{table.comment}
+ *
+ * @author ${author}
+ * @date ${date}
+ */
+#if(${table.convert})
+@TableName("${table.name}")
+#end
+class ${entity} : #if(${superEntityClass})${superEntityClass}()#end {
+
+#foreach($field in ${table.fields})
+    #set($propertyType=${field.propertyType})
+    #if("$propertyType" == "Integer")
+        #set($propertyType="Int")
+    #end
+    #if(${field.keyFlag})
+        #set($keyPropertyName=${field.propertyName})
+    #end
+    #if("$!field.comment" != "")
+    /**
+     * ${field.comment}
+     */
+    #end
+    #if(${field.keyFlag})
+    ## 主键
+    #if(${field.keyIdentityFlag})
+    @TableId(value = "${field.name}", type = IdType.AUTO)
+    #elseif(!$null.isNull(${idType}) && "$!idType" != "")
+    @TableId(value = "${field.name}", type = IdType.${idType})
+    #elseif(${field.convert})
+    @TableId("${field.name}")
+    #end
+    ## 普通字段
+    #elseif(${field.fill})
+    ## -----   存在字段填充设置   -----
+    #if(${field.convert})
+    @TableField(value = "${field.name}", fill = FieldFill.${field.fill})
+    #else
+    @TableField(fill = FieldFill.${field.fill})
+    #end
+    #elseif(${field.convert})
+    @TableField("${field.name}")
+    #else
+    ## 乐观锁注解
+    #if(${versionFieldName}==${field.name})
+    @Version
+    #end
+    ## 逻辑删除注解
+    #if(${logicDeleteFieldName}==${field.name})
+    @TableLogic
+    #end
+    #end
+    var ${field.propertyName}: ${propertyType}? = null
+
+#end
+#if(${entitySerialVersionUID})
+    companion object {
+        private const val serialVersionUID = 1L
+    }
+
+#end
+    override fun toString(): String {
+        return "${entity}{" +
+            #foreach($field in ${table.fields})
+                #if($!{foreach.index}==0)
+                "${field.propertyName}=" + ${field.propertyName} +
+                #else
+                ", ${field.propertyName}=" + ${field.propertyName} +
+                #end
+            #end
+                "} " + ", " + super.toString()
+    }
+}

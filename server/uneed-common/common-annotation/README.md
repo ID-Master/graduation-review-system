@@ -1,0 +1,1 @@
+通用的annotation常量工程
