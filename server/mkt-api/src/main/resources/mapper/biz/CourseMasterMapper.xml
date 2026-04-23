@@ -5,7 +5,7 @@
     <select id="listCourseByCondition" parameterType="cn.edu.cuhk.mkt.param.biz.CourseMasterParam" resultType="cn.edu.cuhk.mkt.entity.biz.StudentCourseVO">
         SELECT
             cm.id AS id,
-            CONCAT('Graduation Audit Self-check Form-', IFNULL(IFNULL(su.name_en, su.name_ch), '')) AS graduationForm,
+            CONCAT('Graduation Audit Self-check Form-', COALESCE(COALESCE(su.name_en, su.name_ch), '')) AS graduationForm,
             su.login_name AS studentId,
             su.name_en AS nameEn,
             su.name_ch AS nameCh,
@@ -22,7 +22,7 @@
                 WHEN cm.status = 4 THEN 'Invalid'
                 ELSE ''
             END AS statusText,
-            DATE_FORMAT(cm.student_submit_time,'%Y-%m-%d') AS submitTime,
+            TO_CHAR(cm.student_submit_time,'YYYY-MM-DD') AS submitTime,
             cm.student_check_box AS studentCheckBox
         FROM
             biz_course_master cm
@@ -84,13 +84,13 @@
     <select id="listCourseMktReport" parameterType="cn.edu.cuhk.mkt.param.CommonParam" resultType="cn.edu.cuhk.mkt.entity.report.MktCourseReport">
         SELECT
         su.login_name AS sid,
-        IFNULL(su.name_en, su.name_ch) AS `name`,
-        IFNULL(cm.major, cm.major) AS major,
-        IFNULL(cm.grade, cm.grade) AS grade,
+        COALESCE(su.name_en, su.name_ch) AS name,
+        COALESCE(cm.major, cm.major) AS major,
+        COALESCE(cm.grade, cm.grade) AS grade,
         (case when su.international_student = 1 then 'Y' when su.international_student = 0 then 'N' else '' end ) AS internationalStudent,
         (
             select
-            GROUP_CONCAT(DISTINCT concat(t3.category_name,'_',t2.course_code) SEPARATOR '\r\n' )
+            STRING_AGG(DISTINCT concat(t3.category_name,'_',t2.course_code), E'\r\n')
             from biz_course_master t1
             left join biz_course_detail t2 on t1.id = t2.course_master_id and t1.remove_flag = 0
             left join biz_course_category t3 on t3.category_code = t2.course_category_code and t3.remove_flag = 0 and t3.major = t1.major and t3.grade = t1.grade
@@ -101,7 +101,7 @@
         ) as progress1,
         (
             select
-            GROUP_CONCAT(DISTINCT concat(t3.category_name,'_',t2.course_code) SEPARATOR '\r\n' )
+            STRING_AGG(DISTINCT concat(t3.category_name,'_',t2.course_code), E'\r\n')
             from biz_course_master t1
             left join biz_course_detail t2 on t1.id = t2.course_master_id and t1.remove_flag = 0
             left join biz_course_category t3 on t3.category_code = t2.course_category_code and t3.remove_flag = 0 and t3.major = t1.major and t3.grade = t1.grade
@@ -112,7 +112,7 @@
         ) as progress2,
         (
             select
-            GROUP_CONCAT(DISTINCT concat(t3.category_name,'_',t2.course_code) SEPARATOR '\r\n' )
+            STRING_AGG(DISTINCT concat(t3.category_name,'_',t2.course_code), E'\r\n')
             from biz_course_master t1
             left join biz_course_detail t2 on t1.id = t2.course_master_id and t1.remove_flag = 0
             left join biz_course_category t3 on t3.category_code = t2.course_category_code and t3.remove_flag = 0 and t3.major = t1.major and t3.grade = t1.grade
@@ -123,28 +123,28 @@
         ) as progress3,
         0 AS totalUnitsPassed,
         (
-        SELECT IFNULL(SUM(IFNULL(cd.units, 0)),0)
+        SELECT COALESCE(SUM(COALESCE(cd.units, 0)),0)
         FROM biz_course_detail cd
         WHERE cd.course_master_id = cm.id
         AND cd.course_category_code = 'University Core'
         AND cd.self_check in(1)
         ) AS ucPass,
         (
-        SELECT IFNULL(SUM(IFNULL(cd.units, 0)),0)
+        SELECT COALESCE(SUM(COALESCE(cd.units, 0)),0)
         FROM biz_course_detail cd
         WHERE cd.course_master_id = cm.id
         AND cd.course_category_code = 'University Core'
         AND cd.self_check in(2)
         ) AS ucNr,
         (
-        SELECT IFNULL(SUM(IFNULL(cd.units, 0)),0)
+        SELECT COALESCE(SUM(COALESCE(cd.units, 0)),0)
         FROM biz_course_detail cd
         WHERE cd.course_master_id = cm.id
         AND cd .course_category_code = 'University Core'
         AND cd.self_check in(3)
         ) AS ucIp,
         (
-        select ifnull(t3.units,0)
+        select COALESCE(t3.units,0)
         from biz_course_detail t1
         left join biz_course_template t2 on t1.course_template_id = t2.id
         left join biz_course_category t3 on t2.course_category_id = t3.id
@@ -154,35 +154,35 @@
         limit 1
         ) AS ucLeft,
         (
-        select ifnull(GROUP_CONCAT(course_code ORDER BY course_code asc SEPARATOR '\r\n' ),'') from biz_course_detail
+        select COALESCE(STRING_AGG(course_code, E'\r\n' ORDER BY course_code asc),'') from biz_course_detail
         where course_master_id = cm.id
         and course_category_code = 'University Core'
         and self_check = 0
         and remove_flag = 0
         ) AS ucRemark,
         (
-        SELECT IFNULL(SUM(IFNULL(cd.units, 0)),0)
+        SELECT COALESCE(SUM(COALESCE(cd.units, 0)),0)
         FROM biz_course_detail cd
         WHERE cd.course_master_id = cm.id
         AND cd.course_category_code = 'School Package'
         AND cd.self_check in(1)
         ) AS spPass,
         (
-        SELECT IFNULL(SUM(IFNULL(cd.units, 0)),0)
+        SELECT COALESCE(SUM(COALESCE(cd.units, 0)),0)
         FROM biz_course_detail cd
         WHERE cd.course_master_id = cm.id
         AND cd.course_category_code = 'School Package'
         AND cd.self_check in(2)
         ) AS spNr,
         (
-        SELECT IFNULL(SUM(IFNULL(cd.units, 0)),0)
+        SELECT COALESCE(SUM(COALESCE(cd.units, 0)),0)
         FROM biz_course_detail cd
         WHERE cd.course_master_id = cm.id
         AND cd .course_category_code = 'School Package'
         AND cd.self_check in(3)
         ) AS spIp,
         (
-        select ifnull(t3.units,0)
+        select COALESCE(t3.units,0)
         from biz_course_detail t1
         left join biz_course_template t2 on t1.course_template_id = t2.id
         left join biz_course_category t3 on t2.course_category_id = t3.id
@@ -192,35 +192,35 @@
         limit 1
         ) AS spLeft,
         (
-        select ifnull(GROUP_CONCAT(course_code ORDER BY course_code asc SEPARATOR '\r\n' ),'') from biz_course_detail
+        select COALESCE(STRING_AGG(course_code, E'\r\n' ORDER BY course_code asc),'') from biz_course_detail
         where course_master_id = cm.id
         and course_category_code = 'School Package'
         and self_check = 0
         and remove_flag = 0
         ) AS spRemark,
         (
-        SELECT IFNULL(SUM(IFNULL(cd.units, 0)),0)
+        SELECT COALESCE(SUM(COALESCE(cd.units, 0)),0)
         FROM biz_course_detail cd
         WHERE cd.course_master_id = cm.id
         AND cd.course_category_code = 'Major Required Courses'
         AND cd.self_check in(1)
         ) AS mrPass,
         (
-        SELECT IFNULL(SUM(IFNULL(cd.units, 0)),0)
+        SELECT COALESCE(SUM(COALESCE(cd.units, 0)),0)
         FROM biz_course_detail cd
         WHERE cd.course_master_id = cm.id
         AND cd.course_category_code = 'Major Required Courses'
         AND cd.self_check in(2)
         ) AS mrNr,
         (
-        SELECT IFNULL(SUM(IFNULL(cd.units, 0)),0)
+        SELECT COALESCE(SUM(COALESCE(cd.units, 0)),0)
         FROM biz_course_detail cd
         WHERE cd.course_master_id = cm.id
         AND cd .course_category_code = 'Major Required Courses'
         AND cd.self_check in(3)
         ) AS mrIp,
         (
-        select ifnull(t3.units,0)
+        select COALESCE(t3.units,0)
         from biz_course_detail t1
         left join biz_course_template t2 on t1.course_template_id = t2.id
         left join biz_course_category t3 on t2.course_category_id = t3.id
@@ -230,14 +230,14 @@
         limit 1
         ) AS mrLeft,
         (
-        select ifnull(GROUP_CONCAT(course_code ORDER BY course_code asc SEPARATOR '\r\n' ),'') from biz_course_detail
+        select COALESCE(STRING_AGG(course_code, E'\r\n' ORDER BY course_code asc),'') from biz_course_detail
         where course_master_id = cm.id
         and course_category_code = 'Major Required Courses'
         and self_check = 0
         and remove_flag = 0
         ) AS mrRemark,
         (
-        SELECT IFNULL(SUM(IFNULL(cd.units, 0)),0)
+        SELECT COALESCE(SUM(COALESCE(cd.units, 0)),0)
         FROM biz_course_detail cd
         WHERE cd.course_master_id = cm.id
         AND cd.course_category_code = 'Major Elective Courses'
@@ -245,7 +245,7 @@
         AND UPPER(TRIM(cd.part)) = 'A'
         ) AS meaPass,
         (
-        SELECT IFNULL(SUM(IFNULL(cd.units, 0)),0)
+        SELECT COALESCE(SUM(COALESCE(cd.units, 0)),0)
         FROM biz_course_detail cd
         WHERE cd.course_master_id = cm.id
         AND cd.course_category_code = 'Major Elective Courses'
@@ -253,7 +253,7 @@
         AND UPPER(TRIM(cd.part)) = 'A'
         ) AS meaNr,
         (
-        SELECT IFNULL(SUM(IFNULL(cd.units, 0)),0)
+        SELECT COALESCE(SUM(COALESCE(cd.units, 0)),0)
         FROM biz_course_detail cd
         WHERE cd.course_master_id = cm.id
         AND cd .course_category_code = 'Major Elective Courses'
@@ -261,7 +261,7 @@
         AND UPPER(TRIM(cd.part)) = 'A'
         ) AS meaIp,
         (
-        select ifnull(t3.units,0)
+        select COALESCE(t3.units,0)
         from biz_course_detail t1
         left join biz_course_template t2 on t1.course_template_id = t2.id
         left join biz_course_category t3 on t2.course_category_id = t3.id
@@ -283,7 +283,7 @@
         limit 1
         ) AS meaUnits,
         (
-        SELECT IFNULL(SUM(IFNULL(cd.units, 0)),0)
+        SELECT COALESCE(SUM(COALESCE(cd.units, 0)),0)
         FROM biz_course_detail cd
         WHERE cd.course_master_id = cm.id
         AND cd .course_category_code = 'Major Elective Courses'
@@ -291,7 +291,7 @@
         AND UPPER(TRIM(cd.part)) = 'B'
         ) AS mebPass,
         (
-        SELECT IFNULL(SUM(IFNULL(cd.units, 0)),0)
+        SELECT COALESCE(SUM(COALESCE(cd.units, 0)),0)
         FROM biz_course_detail cd
         WHERE cd.course_master_id = cm.id
         AND cd .course_category_code = 'Major Elective Courses'
@@ -299,7 +299,7 @@
         AND UPPER(TRIM(cd.part)) = 'B'
         ) AS mebNr,
         (
-        SELECT IFNULL(SUM(IFNULL(cd.units, 0)),0)
+        SELECT COALESCE(SUM(COALESCE(cd.units, 0)),0)
         FROM biz_course_detail cd
         WHERE cd.course_master_id = cm.id
         AND cd .course_category_code = 'Major Elective Courses'
@@ -307,7 +307,7 @@
         AND UPPER(TRIM(cd.part)) = 'B'
         ) AS mebIp,
         (
-        select ifnull(t3.units,0)
+        select COALESCE(t3.units,0)
         from biz_course_detail t1
         left join biz_course_template t2 on t1.course_template_id = t2.id
         left join biz_course_category t3 on t2.course_category_id = t3.id
@@ -329,28 +329,28 @@
         limit 1
         ) AS mebUnits,
         (
-        SELECT IFNULL(SUM(IFNULL(cd.units, 0)),0)
+        SELECT COALESCE(SUM(COALESCE(cd.units, 0)),0)
         FROM biz_course_detail cd
         WHERE cd.course_master_id = cm.id
         AND cd .course_category_code = 'Free Elective'
         AND cd.self_check in(1)
         ) AS fePass,
         (
-        SELECT IFNULL(SUM(IFNULL(cd.units, 0)),0)
+        SELECT COALESCE(SUM(COALESCE(cd.units, 0)),0)
         FROM biz_course_detail cd
         WHERE cd.course_master_id = cm.id
         AND cd .course_category_code = 'Free Elective'
         AND cd.self_check in(2)
         ) AS feNr,
         (
-        SELECT IFNULL(SUM(IFNULL(cd.units, 0)),0)
+        SELECT COALESCE(SUM(COALESCE(cd.units, 0)),0)
         FROM biz_course_detail cd
         WHERE cd.course_master_id = cm.id
         AND cd .course_category_code = 'Free Elective'
         AND cd.self_check in(3)
         ) AS feIp,
         (
-        select ifnull(units,0) from biz_course_category where major in (
+        select COALESCE(units,0) from biz_course_category where major in (
         select DISTINCT t2.major from biz_course_detail t1
         left join biz_course_master t2 on t1.course_master_id = t2.id
         where t2.id = cm.id
@@ -364,7 +364,7 @@
         LEFT JOIN sys_user su ON su.id = cm.student_id
         WHERE
         cm.remove_flag = 0
-        AND cm.`status` IN(1, 3)
+        AND cm.status IN(1, 3)
             <if test="param.ids != null and param.ids.size() > 0">
                 AND cm.id IN
                 <foreach collection="param.ids" item="item" open="(" separator="," close=")">
@@ -378,11 +378,11 @@
         select
             t2.grade
              ,t1.major
-             ,ifnull((select sum(1) from biz_course_master where remove_flag = 0 and major = t1.major),0) as total
-             ,ifnull((select sum(1) from biz_course_master where remove_flag = 0 and major = t1.major and `status` = 1),0) as submit_total
-             ,ifnull((select sum(1) from biz_course_master where remove_flag = 0 and major = t1.major and `status` = 0),0) as unfilled_total
-             ,ifnull((select sum(1) from biz_course_master where remove_flag = 0 and major = t1.major and `status` = 1 and student_check_box = 1),0) as self_declaration_total
-             ,ifnull((select sum(1) from biz_course_master where remove_flag = 0 and major = t1.major and `status` = 3),0) as officer_checked_total
+             ,COALESCE((select sum(1) from biz_course_master where remove_flag = 0 and major = t1.major),0) as total
+             ,COALESCE((select sum(1) from biz_course_master where remove_flag = 0 and major = t1.major and status = 1),0) as submit_total
+             ,COALESCE((select sum(1) from biz_course_master where remove_flag = 0 and major = t1.major and status = 0),0) as unfilled_total
+             ,COALESCE((select sum(1) from biz_course_master where remove_flag = 0 and major = t1.major and status = 1 and student_check_box = 1),0) as self_declaration_total
+             ,COALESCE((select sum(1) from biz_course_master where remove_flag = 0 and major = t1.major and status = 3),0) as officer_checked_total
         from biz_course_master t1
                  left join sys_user t2 on t1.student_id = t2.id
         where 1=1
@@ -395,11 +395,11 @@
         select
             t2.grade
              ,t1.major
-             ,ifnull((select sum(1) from biz_course_master where remove_flag = 0 and major = t1.major),0) as total
-             ,ifnull((select sum(1) from biz_course_master where remove_flag = 0 and major = t1.major and `status` = 1),0) as submit_total
-             ,ifnull((select sum(1) from biz_course_master where remove_flag = 0 and major = t1.major and `status` = 0),0) as unfilled_total
-             ,ifnull((select sum(1) from biz_course_master where remove_flag = 0 and major = t1.major and `status` = 1 and student_check_box = 1),0) as self_declaration_total
-             ,ifnull((select sum(1) from biz_course_master where remove_flag = 0 and major = t1.major and `status` = 3),0) as officer_checked_total
+             ,COALESCE((select sum(1) from biz_course_master where remove_flag = 0 and major = t1.major),0) as total
+             ,COALESCE((select sum(1) from biz_course_master where remove_flag = 0 and major = t1.major and status = 1),0) as submit_total
+             ,COALESCE((select sum(1) from biz_course_master where remove_flag = 0 and major = t1.major and status = 0),0) as unfilled_total
+             ,COALESCE((select sum(1) from biz_course_master where remove_flag = 0 and major = t1.major and status = 1 and student_check_box = 1),0) as self_declaration_total
+             ,COALESCE((select sum(1) from biz_course_master where remove_flag = 0 and major = t1.major and status = 3),0) as officer_checked_total
         from biz_course_master t1
                  left join sys_user t2 on t1.student_id = t2.id
         where 1=1

@@ -10,10 +10,10 @@ spring:
         filters: stat
       datasource:
         primary:
-          url: jdbc:mysql://106.54.209.225:3307/cuhk_mkt?Unicode=true&useSSL=false&characterEncoding=UTF-8
-          username: root
-          password: e31TOPwL
-          driver-class-name: com.mysql.jdbc.Driver
+          url: jdbc:postgresql://10.20.217.87:15432/sme_ugo_graduate
+          username: sme_ugo_graduate
+          password: c21lX3Vnb19ncmFkdWF0ZQ==
+          driver-class-name: org.postgresql.Driver
           defaultAutoCommit: false
 
   redis:
