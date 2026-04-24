@@ -127,21 +127,21 @@
         FROM biz_course_detail cd
         WHERE cd.course_master_id = cm.id
         AND cd.course_category_code = 'University Core'
-        AND cd.self_check in(1)
+        AND cd.self_check in('1')
         ) AS ucPass,
         (
         SELECT COALESCE(SUM(COALESCE(cd.units, 0)),0)
         FROM biz_course_detail cd
         WHERE cd.course_master_id = cm.id
         AND cd.course_category_code = 'University Core'
-        AND cd.self_check in(2)
+        AND cd.self_check in('2')
         ) AS ucNr,
         (
         SELECT COALESCE(SUM(COALESCE(cd.units, 0)),0)
         FROM biz_course_detail cd
         WHERE cd.course_master_id = cm.id
         AND cd .course_category_code = 'University Core'
-        AND cd.self_check in(3)
+        AND cd.self_check in('3')
         ) AS ucIp,
         (
         select COALESCE(t3.units,0)
@@ -157,7 +157,7 @@
         select COALESCE(STRING_AGG(course_code, E'\r\n' ORDER BY course_code asc),'') from biz_course_detail
         where course_master_id = cm.id
         and course_category_code = 'University Core'
-        and self_check = 0
+        and self_check = '0'
         and remove_flag = 0
         ) AS ucRemark,
         (
@@ -165,21 +165,21 @@
         FROM biz_course_detail cd
         WHERE cd.course_master_id = cm.id
         AND cd.course_category_code = 'School Package'
-        AND cd.self_check in(1)
+        AND cd.self_check in('1')
         ) AS spPass,
         (
         SELECT COALESCE(SUM(COALESCE(cd.units, 0)),0)
         FROM biz_course_detail cd
         WHERE cd.course_master_id = cm.id
         AND cd.course_category_code = 'School Package'
-        AND cd.self_check in(2)
+        AND cd.self_check in('2')
         ) AS spNr,
         (
         SELECT COALESCE(SUM(COALESCE(cd.units, 0)),0)
         FROM biz_course_detail cd
         WHERE cd.course_master_id = cm.id
         AND cd .course_category_code = 'School Package'
-        AND cd.self_check in(3)
+        AND cd.self_check in('3')
         ) AS spIp,
         (
         select COALESCE(t3.units,0)
@@ -195,7 +195,7 @@
         select COALESCE(STRING_AGG(course_code, E'\r\n' ORDER BY course_code asc),'') from biz_course_detail
         where course_master_id = cm.id
         and course_category_code = 'School Package'
-        and self_check = 0
+        and self_check = '0'
         and remove_flag = 0
         ) AS spRemark,
         (
@@ -203,21 +203,21 @@
         FROM biz_course_detail cd
         WHERE cd.course_master_id = cm.id
         AND cd.course_category_code = 'Major Required Courses'
-        AND cd.self_check in(1)
+        AND cd.self_check in('1')
         ) AS mrPass,
         (
         SELECT COALESCE(SUM(COALESCE(cd.units, 0)),0)
         FROM biz_course_detail cd
         WHERE cd.course_master_id = cm.id
         AND cd.course_category_code = 'Major Required Courses'
-        AND cd.self_check in(2)
+        AND cd.self_check in('2')
         ) AS mrNr,
         (
         SELECT COALESCE(SUM(COALESCE(cd.units, 0)),0)
         FROM biz_course_detail cd
         WHERE cd.course_master_id = cm.id
         AND cd .course_category_code = 'Major Required Courses'
-        AND cd.self_check in(3)
+        AND cd.self_check in('3')
         ) AS mrIp,
         (
         select COALESCE(t3.units,0)
@@ -233,7 +233,7 @@
         select COALESCE(STRING_AGG(course_code, E'\r\n' ORDER BY course_code asc),'') from biz_course_detail
         where course_master_id = cm.id
         and course_category_code = 'Major Required Courses'
-        and self_check = 0
+        and self_check = '0'
         and remove_flag = 0
         ) AS mrRemark,
         (
@@ -241,7 +241,7 @@
         FROM biz_course_detail cd
         WHERE cd.course_master_id = cm.id
         AND cd.course_category_code = 'Major Elective Courses'
-        AND cd.self_check in(1)
+        AND cd.self_check in('1')
         AND UPPER(TRIM(cd.part)) = 'A'
         ) AS meaPass,
         (
@@ -249,7 +249,7 @@
         FROM biz_course_detail cd
         WHERE cd.course_master_id = cm.id
         AND cd.course_category_code = 'Major Elective Courses'
-        AND cd.self_check in(2)
+        AND cd.self_check in('2')
         AND UPPER(TRIM(cd.part)) = 'A'
         ) AS meaNr,
         (
@@ -257,7 +257,7 @@
         FROM biz_course_detail cd
         WHERE cd.course_master_id = cm.id
         AND cd .course_category_code = 'Major Elective Courses'
-        AND cd.self_check in(3)
+        AND cd.self_check in('3')
         AND UPPER(TRIM(cd.part)) = 'A'
         ) AS meaIp,
         (
@@ -287,7 +287,7 @@
         FROM biz_course_detail cd
         WHERE cd.course_master_id = cm.id
         AND cd .course_category_code = 'Major Elective Courses'
-        AND cd.self_check in(1)
+        AND cd.self_check in('1')
         AND UPPER(TRIM(cd.part)) = 'B'
         ) AS mebPass,
         (
@@ -295,7 +295,7 @@
         FROM biz_course_detail cd
         WHERE cd.course_master_id = cm.id
         AND cd .course_category_code = 'Major Elective Courses'
-        AND cd.self_check in(2)
+        AND cd.self_check in('2')
         AND UPPER(TRIM(cd.part)) = 'B'
         ) AS mebNr,
         (
@@ -303,7 +303,7 @@
         FROM biz_course_detail cd
         WHERE cd.course_master_id = cm.id
         AND cd .course_category_code = 'Major Elective Courses'
-        AND cd.self_check in(3)
+        AND cd.self_check in('3')
         AND UPPER(TRIM(cd.part)) = 'B'
         ) AS mebIp,
         (
@@ -333,21 +333,21 @@
         FROM biz_course_detail cd
         WHERE cd.course_master_id = cm.id
         AND cd .course_category_code = 'Free Elective'
-        AND cd.self_check in(1)
+        AND cd.self_check in('1')
         ) AS fePass,
         (
         SELECT COALESCE(SUM(COALESCE(cd.units, 0)),0)
         FROM biz_course_detail cd
         WHERE cd.course_master_id = cm.id
         AND cd .course_category_code = 'Free Elective'
-        AND cd.self_check in(2)
+        AND cd.self_check in('2')
         ) AS feNr,
         (
         SELECT COALESCE(SUM(COALESCE(cd.units, 0)),0)
         FROM biz_course_detail cd
         WHERE cd.course_master_id = cm.id
         AND cd .course_category_code = 'Free Elective'
-        AND cd.self_check in(3)
+        AND cd.self_check in('3')
         ) AS feIp,
         (
         select COALESCE(units,0) from biz_course_category where major in (
@@ -368,7 +368,7 @@
             <if test="param.ids != null and param.ids.size() > 0">
                 AND cm.id IN
                 <foreach collection="param.ids" item="item" open="(" separator="," close=")">
-                    #{item}
+                    #{item,jdbcType=VARCHAR}
                 </foreach>
             </if>
     </select>
