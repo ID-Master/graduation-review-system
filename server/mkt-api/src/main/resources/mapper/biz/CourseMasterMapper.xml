@@ -30,24 +30,24 @@
         WHERE
             cm.remove_flag = 0
             AND su.remove_flag = 0
-            <if test="condition.status != null and condition.status != '' ">
+            <if test="condition.status != null">
                 AND cm.status = #{condition.status}
             </if>
             <choose>
-                <when test="condition.timeType != null and condition.timeType == '0'">
+                <when test="condition.timeType != null and (condition.timeType == '0' or condition.timeType == 0)">
                     <if test="condition.startTime != null and condition.startTime != '' ">
-                        AND cm.student_submit_time <![CDATA[ >= ]]> #{condition.startTime}
+                        AND cm.student_submit_time <![CDATA[ >= ]]> CAST(#{condition.startTime} AS TIMESTAMP)
                     </if>
                     <if test="condition.endTime != null and condition.endTime != '' ">
-                        AND cm.student_submit_time <![CDATA[ <= ]]> #{condition.endTime}
+                        AND cm.student_submit_time <![CDATA[ <= ]]> CAST(#{condition.endTime} AS TIMESTAMP)
                     </if>
                 </when>
-                <when test="condition.timeType != null and condition.timeType == '1'">
+                <when test="condition.timeType != null and (condition.timeType == '1' or condition.timeType == 1)">
                     <if test="condition.startTime != null and condition.startTime != '' ">
-                        AND cm.officer_checked_date <![CDATA[ >= ]]> #{condition.startTime}
+                        AND cm.officer_checked_date <![CDATA[ >= ]]> CAST(#{condition.startTime} AS TIMESTAMP)
                     </if>
                     <if test="condition.endTime != null and condition.endTime != '' ">
-                        AND cm.officer_checked_date <![CDATA[ <= ]]> #{condition.endTime}
+                        AND cm.officer_checked_date <![CDATA[ <= ]]> CAST(#{condition.endTime} AS TIMESTAMP)
                     </if>
                 </when>
                 <otherwise></otherwise>

@@ -57,13 +57,13 @@ public class CourseMasterParam extends CommonParam {
      * 状态
      */
     @ApiModelProperty(value = "状态", name = "status")
-    private String status;
+    private Integer status;
 
     /**
      * 时间类型
      */
     @ApiModelProperty(value = "时间类型", name = "时间类型（0：提交时间，1：检查时间）")
-    private String timeType;
+    private Integer timeType;
 
     /**
      * 开始时间
