@@ -74,7 +74,7 @@ public class CourseDetailServiceImpl extends SuperServiceImpl<CourseDetailMapper
         //1. 查询已填课程明细
         List<CourseDetail> resultList = this.lambdaQuery()
             .eq(CourseDetail::getCourseMasterId, courseMaster.getId())
-            .notIn(CourseDetail::getSelfCheck, 0)
+            .notIn(CourseDetail::getSelfCheck, "0")
             .notIn(CourseDetail::getCourseCategoryCode, BizConst.FREE_ELECTIVE)
             .list();
         if(ObjectUtils.isNotEmpty(resultList)) {
